@@ -46,6 +46,7 @@ route.post(
 				});
 			}
 
+			prisma.$disconnect();
 			return res.json(signUser(user));
 		} catch (error) {
 			console.log(error);

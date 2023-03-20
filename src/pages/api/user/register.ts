@@ -50,6 +50,7 @@ route.post(
 				console.error(err);
 			});
 
+		prisma.$disconnect();
 		if (user) {
 			return res.json(signUser(user));
 		}

@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { verifyUser } from "$src/lib/utils/helpers";
 import type { RequestWithUser, UserError } from "$src/lib/types/user";
 import nextConnect from "next-connect";
 import { prisma } from "$src/lib/utils/prisma";
 import { PlaylistResponse } from "$src/lib/types/playlist";
-import { Song, Visibility } from "@prisma/client";
+import { Visibility } from "@prisma/client";
+import { verifyUser } from "$src/lib/utils/helpers";
 
 const route = nextConnect({
 	onNoMatch: (req: NextApiRequest, res: NextApiResponse) => {
@@ -13,41 +13,39 @@ const route = nextConnect({
 });
 
 route.use(verifyUser);
-
 route.get(
-	async (req: RequestWithUser, res: NextApiResponse<Song[] | UserError>) => {
+	async (
+		req: RequestWithUser,
+		res: NextApiResponse<PlaylistResponse[] | UserError>
+	) => {
 		try {
-			let { orderBy, orderDirn } = req.query;
+			let { keyword, orderBy, orderDirn, take, offset } = req.query;
 			orderBy = orderBy as string;
 			orderDirn = orderDirn as string;
 
-			let { playlistID } = req.body;
-
-			if (!playlistID) {
-				return res.status(400).json({
-					msg: "Playlist ID not found",
-					field: "playlistID",
-				});
+			if (["label", "createdAt"].indexOf(orderBy) == -1) {
+				orderBy = "createdAt";
 			}
 
-			const OrderArray = ["title", "album", "releaseDate", "addedAt"];
-			if (OrderArray.indexOf(orderBy) == -1) {
-				orderBy = "addedAt";
-			}
 			if (["asc", "desc"].indexOf(orderDirn) == -1) {
 				orderDirn = "desc";
 			}
+
 			let order: any = {};
 			order[orderBy] = orderDirn;
 
-			const songs = await prisma.song.findMany({
-				where: {
-					playlistID,
-				},
-				orderBy: order,
-			});
+			const playlists = await prisma.sharedPlaylist
+				.findMany({
+					where: {
+						receiverID: req.user.id,
+					},
+					include: {
+						playlist: true,
+					},
+				})
+				.then((result) => result.map((r) => r.playlist));
 
-			return res.status(200).json(songs);
+			return res.status(200).json(playlists);
 		} catch (error) {
 			console.log(error);
 			return res

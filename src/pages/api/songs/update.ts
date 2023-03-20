@@ -19,48 +19,47 @@ route.post(
 	) => {
 		try {
 			const {
+				id,
 				title,
 				album,
 				artists,
 				duration,
 				releaseYear,
 				deezerURL,
-				playlistID,
 			} = req.body;
 
-			if (!playlistID) {
+			if (!id) {
 				return res.status(400).json({
-					msg: "Playlist ID not found",
-					field: "playlistID",
+					msg: "Song ID not found",
+					field: "id",
 				});
 			}
 
-			if (!title) {
-				return res.status(400).json({
-					msg: "Please Enter the title of the song",
-					field: "title",
-				});
-			}
-
-			const playlist = await prisma.playlist.findUnique({
+			const song = await prisma.song.findUnique({
 				where: {
-					id: playlistID,
+					id,
+				},
+				include: {
+					playlist: true,
 				},
 			});
 
-			if (!playlist) {
+			if (!song) {
 				return res.status(404).json({
-					msg: "Playlist not found",
+					msg: "Song not found",
 				});
 			}
 
-			if (req.user.id !== playlist.userID) {
+			if (req.user.id !== song.playlist.userID) {
 				return res.status(403).json({
-					msg: "You are not authorized to manage this playlist",
+					msg: "You are not authorized to edit this song",
 				});
 			}
 
-			const song = await prisma.song.create({
+			const updatedSong = await prisma.song.update({
+				where: {
+					id,
+				},
 				data: {
 					title,
 					album,
@@ -68,11 +67,10 @@ route.post(
 					deezerURL,
 					duration,
 					releaseYear,
-					playlistID,
 				},
 			});
 
-			return res.status(200).json(song);
+			return res.status(200).json(updatedSong);
 		} catch (error) {
 			console.log(error);
 			return res

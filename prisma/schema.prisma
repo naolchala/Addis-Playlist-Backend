@@ -51,7 +51,7 @@ model Song {
   album       String?
   artists     String[]
   duration    String?
-  releaseDate String?
+  releaseYear Int?
   deezerURL   String?
   addedAt     DateTime @default(now())
 

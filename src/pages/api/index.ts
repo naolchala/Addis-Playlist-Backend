@@ -1,4 +1,5 @@
 import helmet from "helmet";
+import cors from "cors";
 import { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
 
@@ -12,6 +13,11 @@ type TestResponse = {
 };
 
 route.use(helmet());
+route.use(
+	cors({
+		origin: "*",
+	})
+);
 
 route.get((req: NextApiRequest, res: NextApiResponse) => {
 	res.status(200).json({

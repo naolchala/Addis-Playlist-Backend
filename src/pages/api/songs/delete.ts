@@ -1,18 +1,24 @@
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { verifyUser } from "$src/lib/utils/helpers";
 import type { RequestWithUser, UserError } from "$src/lib/types/user";
 import nextConnect from "next-connect";
 import { SongResponse } from "$src/lib/types/playlist";
 import { prisma } from "$src/lib/utils/prisma";
+import cors from "cors";
 
 const route = nextConnect({
 	onError: (req, res) => (res.statusCode = 504),
 	onNoMatch: (req, res) => (res.statusCode = 404),
 });
 
-route.use(verifyUser);
+route.use(cors());
+
+route.options((req: NextApiRequest, res: NextApiResponse) => {
+	return res.status(200).send("");
+});
 
 route.delete(
+	verifyUser,
 	async (
 		req: RequestWithUser,
 		res: NextApiResponse<SongResponse | UserError | any>

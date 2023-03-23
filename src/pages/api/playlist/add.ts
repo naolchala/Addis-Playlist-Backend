@@ -6,6 +6,7 @@ import multer from "multer";
 import { cloudinary, uploadImage } from "$src/lib/utils/cloudinary";
 import { prisma } from "$src/lib/utils/prisma";
 import { PlaylistResponse } from "$src/lib/types/playlist";
+import cors from "cors";
 
 const route = nextConnect({
 	onError: (req, res) => (res.statusCode = 504),
@@ -17,10 +18,15 @@ const upload = multer({
 });
 const fileMiddleware = upload.single("playlistArt");
 
+route.use(cors());
 route.use(fileMiddleware);
-route.use(verifyUser);
+
+route.options((req: NextApiRequest, res: NextApiResponse) => {
+	return res.status(200).send("");
+});
 
 route.post(
+	verifyUser,
 	async (
 		req: RequestWithFile,
 		res: NextApiResponse<PlaylistResponse | UserError>

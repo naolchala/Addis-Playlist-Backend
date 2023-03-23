@@ -13,6 +13,10 @@ const route = nextConnect({
 
 route.use(cors());
 
+route.options((req: NextApiRequest, res: NextApiResponse) => {
+	return res.status(200).send("");
+});
+
 route.post(
 	async (
 		req: NextApiRequest,

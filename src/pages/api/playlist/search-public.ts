@@ -5,11 +5,18 @@ import nextConnect from "next-connect";
 import { prisma } from "$src/lib/utils/prisma";
 import { PlaylistResponse } from "$src/lib/types/playlist";
 import { Visibility } from "@prisma/client";
+import cors from "cors";
 
 const route = nextConnect({
 	onNoMatch: (req: NextApiRequest, res: NextApiResponse) => {
 		return res.status(404);
 	},
+});
+
+route.use(cors());
+
+route.options((req: NextApiRequest, res: NextApiResponse) => {
+	return res.status(200).send("");
 });
 
 route.get(

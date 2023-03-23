@@ -4,6 +4,7 @@ import type { RequestWithUser, UserError } from "$src/lib/types/user";
 import nextConnect from "next-connect";
 import { prisma } from "$src/lib/utils/prisma";
 import { PlaylistResponse } from "$src/lib/types/playlist";
+import cors from "cors";
 
 const route = nextConnect({
 	onNoMatch: (req: NextApiRequest, res: NextApiResponse) => {
@@ -11,9 +12,14 @@ const route = nextConnect({
 	},
 });
 
-route.use(verifyUser);
+route.use(cors());
+
+route.options((req: NextApiRequest, res: NextApiResponse) => {
+	return res.status(200).send("");
+});
 
 route.post(
+	verifyUser,
 	async (
 		req: RequestWithUser,
 		res: NextApiResponse<PlaylistResponse | UserError>

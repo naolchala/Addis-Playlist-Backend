@@ -1,7 +1,6 @@
-import helmet from "helmet";
-import cors from "cors";
 import { NextApiRequest, NextApiResponse } from "next";
 import nextConnect from "next-connect";
+import cors from "cors";
 
 const route = nextConnect({
 	onNoMatch: (res, req) => (res.statusCode = 404),
@@ -12,12 +11,7 @@ type TestResponse = {
 	time: Date;
 };
 
-route.use(helmet());
-route.use(
-	cors({
-		origin: "*",
-	})
-);
+route.use(cors());
 
 route.get((req: NextApiRequest, res: NextApiResponse) => {
 	res.status(200).json({

@@ -4,11 +4,14 @@ import { signUser } from "$src/lib/utils/helpers";
 import type { UserError, UserResponse } from "$src/lib/types/user";
 import nextConnect from "next-connect";
 import bcrypt from "bcrypt";
+import cors from "cors";
 
 const route = nextConnect({
 	onNoMatch: (req: NextApiRequest, res: NextApiResponse) =>
 		res.status(404).json({ msg: "NOT FOUND!" }),
 });
+
+route.use(cors());
 
 route.post(
 	async (

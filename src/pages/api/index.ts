@@ -13,6 +13,10 @@ type TestResponse = {
 
 route.use(cors());
 
+route.options((req: NextApiRequest, res: NextApiResponse) => {
+	return res.status(200).send("");
+});
+
 route.get((req: NextApiRequest, res: NextApiResponse) => {
 	res.status(200).json({
 		message: "API Working..",

@@ -28,7 +28,7 @@ route.post(
 				id,
 				title,
 				album,
-				artists,
+				artist,
 				duration,
 				releaseYear,
 				deezerURL,
@@ -69,7 +69,7 @@ route.post(
 				data: {
 					title,
 					album,
-					artists,
+					artist,
 					deezerURL,
 					duration,
 					releaseYear,

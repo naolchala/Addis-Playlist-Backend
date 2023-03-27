@@ -48,12 +48,12 @@ route.get(verifyUser, async (req: RequestWithUser, res: NextApiResponse) => {
 			})
 			.then((result) => {
 				return result.map((s) => {
-					let { password, id, ...info } = s.receiver;
+					let { password, ...info } = s.receiver;
 					return info;
 				});
 			});
 
-		return res.json(shared);
+		return res.status(200).json(shared);
 	} catch (error) {
 		console.log(error);
 		return res

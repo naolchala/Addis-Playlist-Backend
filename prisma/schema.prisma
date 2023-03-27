@@ -49,7 +49,7 @@ model Song {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   album       String?
-  artists     String[]
+  artist      String
   duration    String?
   releaseYear Int?
   deezerURL   String?

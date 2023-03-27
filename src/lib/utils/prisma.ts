@@ -1,19 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 
-class PrismaC {
-	static instance?: PrismaClient = undefined;
+const prismaGlobal = global as unknown as { prisma: PrismaClient };
 
-	static getInstance() {
-		if (!this.instance) {
-			this.instance = new PrismaClient();
-			this.instance.$connect();
-			console.log("Prisma Client Created");
-		}
+export const prisma =
+	prismaGlobal.prisma || new PrismaClient({ log: ["query", "warn"] });
 
-		return this.instance;
-	}
+if (process.env.NODE_ENV !== "production") {
+	prismaGlobal.prisma = prisma;
 }
-
-const prisma = PrismaC.getInstance();
-
-export { prisma };

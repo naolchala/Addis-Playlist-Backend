@@ -1,10 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { verifyUser } from "$src/lib/utils/helpers";
-import type { RequestWithUser, UserError } from "$src/lib/types/user";
+import type { RequestWithUser } from "$src/lib/types/user";
 import nextConnect from "next-connect";
 import { prisma } from "$src/lib/utils/prisma";
-import { PlaylistResponse } from "$src/lib/types/playlist";
-import { Visibility } from "@prisma/client";
 import cors from "cors";
 
 const route = nextConnect({
@@ -19,13 +16,14 @@ route.options((req: NextApiRequest, res: NextApiResponse) => {
 	return res.status(200).send("");
 });
 
-route.post(async (req: RequestWithUser, res: NextApiResponse) => {
+route.get(async (req: RequestWithUser, res: NextApiResponse) => {
 	try {
-		let { playlistID } = req.body;
+		let { playlistID } = req.query;
 
 		if (!playlistID) {
 			return res.status(400).json({ msg: "Playlist ID not found" });
 		}
+		playlistID = playlistID as string;
 
 		const playlist = await prisma.playlist.findUnique({
 			where: {

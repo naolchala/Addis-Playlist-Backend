@@ -25,7 +25,7 @@ route.get(
 		res: NextApiResponse<PlaylistResponse[] | UserError>
 	) => {
 		try {
-			let { keyword, orderBy, orderDirn, take, offset } = req.query;
+			let { keyword, orderBy, orderDirn } = req.query;
 
 			orderBy = orderBy as string;
 			orderDirn = orderDirn as string;
@@ -50,8 +50,6 @@ route.get(
 					visibility: Visibility.PUBLIC,
 				},
 				orderBy: order,
-				take: parseInt(take as string) || 20,
-				skip: parseInt(offset as string) || 0,
 				include: {
 					_count: true,
 				},

@@ -25,8 +25,7 @@ route.get(
 		res: NextApiResponse<PlaylistResponse[] | UserError>
 	) => {
 		try {
-			let { keyword, orderBy, orderDirn, take, offset, visibility } =
-				req.query;
+			let { keyword, orderBy, orderDirn, visibility } = req.query;
 
 			orderBy = orderBy as string;
 			orderDirn = orderDirn as string;
@@ -57,8 +56,6 @@ route.get(
 					userID: req.user.id,
 				},
 				orderBy: order,
-				take: parseInt(take as string) || 20,
-				skip: parseInt(offset as string) || 0,
 				include: {
 					_count: true,
 				},

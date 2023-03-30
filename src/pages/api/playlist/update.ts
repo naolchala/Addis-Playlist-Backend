@@ -25,6 +25,8 @@ route.post(
 		res: NextApiResponse<PlaylistResponse | UserError>
 	) => {
 		try {
+			console.log(req.user);
+
 			const { id, label, desc, visibility, favorite } = req.body;
 
 			if (!id) {
@@ -49,19 +51,21 @@ route.post(
 				});
 			}
 
-			await prisma.playlist
-				.update({
-					where: {
-						id: playlist.id,
-					},
-					data: {
-						label,
-						favorite,
-						desc,
-						visibility,
-					},
-				})
-				.then((p) => res.status(200).json(p));
+			console.log(playlist);
+
+			let data = await prisma.playlist.update({
+				where: {
+					id: playlist.id,
+				},
+				data: {
+					label,
+					favorite,
+					desc,
+					visibility,
+				},
+			});
+
+			return res.status(200).json(data);
 		} catch (error) {
 			console.log(error);
 			return res

@@ -19,7 +19,7 @@ route.options((req: NextApiRequest, res: NextApiResponse) => {
 	return res.status(200).send("");
 });
 
-route.get(
+route.post(
 	verifyUser,
 	async (req: RequestWithUser, res: NextApiResponse<Song[] | UserError>) => {
 		try {

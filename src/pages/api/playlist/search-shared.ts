@@ -26,7 +26,8 @@ route.get(
 		res: NextApiResponse<PlaylistResponse[] | UserError>
 	) => {
 		try {
-			let { keyword, orderBy, orderDirn, take, offset } = req.query;
+			let { keyword, orderBy, orderDirn } = req.query;
+			keyword = keyword as string;
 			orderBy = orderBy as string;
 			orderDirn = orderDirn as string;
 
@@ -41,18 +42,32 @@ route.get(
 			let order: any = {};
 			order[orderBy] = orderDirn;
 
-			const playlists = await prisma.sharedPlaylist
-				.findMany({
-					where: {
-						receiverID: req.user.id,
-					},
-					include: {
-						playlist: true,
-					},
-				})
-				.then((result) => result.map((r) => r.playlist));
+			const playlists = await prisma.sharedPlaylist.findMany({
+				where: {
+					receiverID: req.user.id,
+				},
+			});
 
-			return res.status(200).json(playlists);
+			const playlistID = playlists.map((playlist) => playlist.playlistID);
+			console.log(playlistID);
+
+			const playlistInfo = await prisma.playlist.findMany({
+				where: {
+					id: {
+						in: playlistID,
+					},
+					label: {
+						contains: keyword,
+						mode: "insensitive",
+					},
+				},
+				include: {
+					_count: true,
+				},
+				orderBy: order,
+			});
+
+			return res.status(200).json(playlistInfo);
 		} catch (error) {
 			console.log(error);
 			return res

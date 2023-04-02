@@ -18,7 +18,7 @@ route.options((req: NextApiRequest, res: NextApiResponse) => {
 	return res.status(200).send("");
 });
 
-route.delete(
+route.post(
 	verifyUser,
 	async (
 		req: RequestWithUser,
@@ -54,8 +54,11 @@ route.delete(
 					where: {
 						id: playlist.id,
 					},
+					include: {
+						_count: true,
+					},
 				})
-				.then((p) => res.status(200).json(playlist));
+				.then((p) => res.status(200).json(p));
 		} catch (error) {
 			console.log(error);
 			return res

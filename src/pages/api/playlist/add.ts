@@ -60,6 +60,9 @@ route.post(
 					playlistArtURL: playlistArt,
 					userID: user.id,
 				},
+				include: {
+					_count: true,
+				},
 			});
 
 			return res.status(200).json(playlist);

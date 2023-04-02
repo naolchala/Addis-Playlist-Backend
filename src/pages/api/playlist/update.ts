@@ -32,7 +32,7 @@ route.post(
 			if (!id) {
 				return res
 					.status(400)
-					.json({ msg: "Playlist ID is required to delete" });
+					.json({ msg: "Playlist ID is required to update" });
 			}
 
 			const playlist = await prisma.playlist.findUnique({
@@ -62,6 +62,9 @@ route.post(
 					favorite,
 					desc,
 					visibility,
+				},
+				include: {
+					_count: true,
 				},
 			});
 

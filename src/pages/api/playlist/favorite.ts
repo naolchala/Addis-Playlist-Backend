@@ -57,6 +57,9 @@ route.post(
 					data: {
 						favorite: !playlist.favorite,
 					},
+					include: {
+						_count: true,
+					},
 				})
 				.then((p) => res.status(200).json(p));
 		} catch (error) {

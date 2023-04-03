@@ -18,7 +18,7 @@ route.options((req: NextApiRequest, res: NextApiResponse) => {
 	return res.status(200).send("");
 });
 
-route.get(verifyUser, async (req: RequestWithUser, res: NextApiResponse) => {
+route.post(verifyUser, async (req: RequestWithUser, res: NextApiResponse) => {
 	try {
 		const { playlistID } = req.body;
 		const user = req.user;

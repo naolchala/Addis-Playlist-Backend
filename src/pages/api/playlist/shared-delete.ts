@@ -20,65 +20,40 @@ route.options((req: NextApiRequest, res: NextApiResponse) => {
 
 route.post(verifyUser, async (req: RequestWithUser, res: NextApiResponse) => {
 	try {
-		const { playlistID, email } = req.body;
+		const { playlistID, userID } = req.body;
 		const user = req.user;
 
 		if (!playlistID) {
 			return res.status(400).json({ msg: "Playlist ID not found" });
 		}
 
-		if (!email) {
-			return res.status(400).json({ msg: "Please Enter Email" });
+		if (!userID) {
+			return res.status(400).json({ msg: "User ID not found" });
 		}
 
-		if (email === req.user.email) {
-			return res
-				.status(400)
-				.json({ msg: "Sorry, You can't share to yourself" });
-		}
-
-		const playlist = await prisma.playlist.findUnique({
-			where: {
-				id: playlistID,
-			},
-		});
-
-		if (!playlist) {
-			return res.status(404).json({ msg: "Playlist ID not found" });
-		}
-
-		const sharedUser = await prisma.user.findUnique({
-			where: {
-				email,
-			},
-		});
-
-		if (!sharedUser) {
-			return res.status(404).json({ msg: "User not found" });
-		}
-
-		const sharedAlready = await prisma.sharedPlaylist.count({
+		const sharedAlready = await prisma.sharedPlaylist.findFirst({
 			where: {
 				playlistID,
-				receiverID: sharedUser.id,
+				receiverID: userID,
 			},
 		});
 
-		if (sharedAlready) {
+		if (!sharedAlready) {
 			return res
-				.status(403)
-				.json({ msg: "Playlist is already shared with the user" });
+				.status(404)
+				.json({ msg: "Playlist isn't shared with the user" });
 		}
 
-		const share = await prisma.sharedPlaylist.create({
-			data: {
-				playlistID,
-				senderID: user.id,
-				receiverID: sharedUser.id,
+		const share = await prisma.sharedPlaylist.delete({
+			where: {
+				id: sharedAlready.id,
+			},
+			include: {
+				receiver: true,
 			},
 		});
 
-		const { password, ...info } = sharedUser;
+		const { password, ...info } = share.receiver;
 
 		return res.status(200).json(info);
 	} catch (error) {

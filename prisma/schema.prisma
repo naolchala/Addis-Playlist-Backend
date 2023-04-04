@@ -42,7 +42,7 @@ model SharedPlaylist {
   senderID   String   @db.ObjectId
   sender     User     @relation(name: "sender", fields: [senderID], references: [id], onDelete: Cascade, onUpdate: Cascade)
   receiverID String   @db.ObjectId
-  receiver   User     @relation(name: "receiver", fields: [senderID], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  receiver   User     @relation(name: "receiver", fields: [receiverID], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Song {
